@@ -1,26 +1,33 @@
 import axios from "axios";
-import type { Movie } from "../types/movie";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import type { MovieResponse } from "../types/movie";
+
+const myKey = import.meta.env.VITE_API_KEY;
 
 axios.defaults.baseURL = "https://api.themoviedb.org/3/";
-interface MoviesResponse {
-  results: Movie[];
-}
-export const fetchMovies = async (query: string): Promise<Movie[]> => {
-  const myKey = import.meta.env.VITE_TMDB_TOKEN;
 
+const fetchMovies = async (
+  query: string,
+  page: number
+): Promise<MovieResponse> => {
   const options = {
-    params: { query: `${query}`, include_adult: false },
-    method: "GET",
+    params: { page, include_adult: false, query: query || undefined },
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${myKey}`,
     },
   };
-  try {
-    const response = await axios.get<MoviesResponse>("search/movie", options);
-    return response.data.results;
-  } catch (error) {
-    console.error("Error fetching movies");
-    throw error;
-  }
+
+  const url = query ? "search/movie" : "movie/popular";
+
+  const response = await axios.get<MovieResponse>(url, options);
+  return response.data;
 };
+
+export function useMovies(query: string, page: number) {
+  return useQuery<MovieResponse>({
+    queryKey: ["movies", query, page],
+    queryFn: () => fetchMovies(query, page),
+    placeholderData: keepPreviousData,
+  });
+}
