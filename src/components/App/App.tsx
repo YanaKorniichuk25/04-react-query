@@ -29,13 +29,7 @@ export default function App() {
   const { data, isLoading, isError, isSuccess } = useMovies(query, currentPage);
 
   useEffect(() => {
-    if (
-      query &&
-      isSuccess &&
-      data &&
-      Array.isArray(data.results) &&
-      data.results.length === 0
-    ) {
+    if (query && isSuccess && data?.results?.length === 0) {
       toast.error("No movies found for your request.");
     }
   }, [isSuccess, data, query]);
@@ -70,7 +64,7 @@ export default function App() {
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
 
-      {data && Array.isArray(data.results) && data.results.length > 0 && (
+      {data?.results && data.results.length > 0 && (
         <MovieGrid movies={data.results} onSelect={openModal} />
       )}
 
