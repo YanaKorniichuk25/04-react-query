@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { MovieResponse } from "../types/movie";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 const myKey = import.meta.env.VITE_API_KEY;
 
@@ -17,17 +17,16 @@ const fetchMovies = async (
       Authorization: `Bearer ${myKey}`,
     },
   };
+
   const url = query ? "search/movie" : "movie/popular";
   const response = await axios.get<MovieResponse>(url, options);
   return response.data;
 };
 
 export function useMovies(query: string, page: number) {
-  const options: UseQueryOptions<MovieResponse, Error> = {
+  return useQuery<MovieResponse, Error>({
     queryKey: ["movies", query, page],
     queryFn: () => fetchMovies(query, page),
-    staleTime: 1000 * 60 * 5,
-  };
-
-  return useQuery(options);
+    placeholderData: keepPreviousData,
+  });
 }

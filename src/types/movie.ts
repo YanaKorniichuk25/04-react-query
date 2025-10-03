@@ -3,11 +3,14 @@ export interface Movie {
   title: string;
   overview: string;
   release_date: string;
-  backdrop_path?: string;
-  vote_average?: number;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  vote_average: number;
 }
 
 export interface MovieResponse {
+  page: number;
   results: Movie[];
   total_pages: number;
+  total_results: number;
 }
