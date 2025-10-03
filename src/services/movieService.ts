@@ -1,6 +1,13 @@
 import axios from "axios";
-import type { MovieResponse } from "../types/movie";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import type { Movie } from "../types/movie";
+
+export interface MovieResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
 
 const myKey = import.meta.env.VITE_API_KEY;
 
